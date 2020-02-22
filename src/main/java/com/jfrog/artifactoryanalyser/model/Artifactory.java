@@ -1,21 +1,23 @@
 package com.jfrog.artifactoryanalyser.model;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.jfrog.artifactoryanalyser.service.ArtifactoryService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.util.ArrayList;
+@Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Artifactory {
 
     @JsonProperty("repo")
     private String repo;
 
+    @Getter
     @JsonProperty("path")
     private String path;
 
+    @Getter
     @JsonProperty("name")
     private String name;
 
@@ -25,22 +27,8 @@ public class Artifactory {
     @JsonProperty("size")
     private Integer size;
 
+    @Setter
+    @Getter
     @JsonProperty("download_count")
     private Integer downloadCount;
-
-    public void  setDownloadCount(Integer downloadCount){
-        this.downloadCount = downloadCount;
-    }
-
-    public Integer getDownloadCount(){
-        return this.downloadCount;
-    }
-
-    public String getPath(){
-        return this.path;
-    }
-
-    public String getName(){
-        return this.name;
-    }
 }

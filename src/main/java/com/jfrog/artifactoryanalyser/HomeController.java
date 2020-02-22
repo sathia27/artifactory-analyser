@@ -1,10 +1,9 @@
 package com.jfrog.artifactoryanalyser;
 import com.jfrog.artifactoryanalyser.model.Artifactory;
-import com.jfrog.artifactoryanalyser.service.ArtifactoryService;
+import com.jfrog.artifactoryanalyser.model.request.ArtifactRequest;
+import com.jfrog.artifactoryanalyser.service.ArtifactoryClient;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Comparator;
 import java.util.List;
@@ -14,14 +13,14 @@ import java.util.stream.Collectors;
 public class HomeController {
 
     @Autowired
-    private ArtifactoryService artifactoryService;
+    private ArtifactoryClient artifactoryClient;
 
-    @RequestMapping("/")
-    public List<Artifactory> index(@RequestParam(name = "repo") String repoName, @RequestParam(defaultValue = "2", name = "topn_repos") Integer topNRepos) {
-        List<Artifactory> artifactories  = artifactoryService.listArtifactsByRepos(repoName).stream()
+    @RequestMapping(value = "/", produces = "application/json")
+    public List<Artifactory> index(ArtifactRequest artifactRequest, @RequestParam(name = "topn_results", defaultValue = "2") Integer topn_results) {
+        String artifactQuery = artifactRequest.toString();
+        List<Artifactory> artifactories  = artifactoryClient.listArtifacts(artifactQuery).stream()
                 .sorted(Comparator.comparing(Artifactory::getDownloadCount).reversed())
-                .limit(topNRepos).collect(Collectors.toList());
-
+                .limit(topn_results).collect(Collectors.toList());
         return artifactories;
     }
 }
