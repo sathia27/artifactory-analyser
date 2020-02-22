@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jfrog.artifactoryanalyser.model.Artifactory;
+import com.jfrog.artifactoryanalyser.model.request.ArtifactRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -41,16 +42,17 @@ public class JfrogArtifactoryClient implements ArtifactoryClient {
     @Autowired
     private HttpClient httpClient;
 
-    private ExecutorService executor = Executors.newCachedThreadPool();
+    @Autowired
+    private ExecutorService executor;
 
     @Override
-    public List<Artifactory> listArtifacts(String querystring) {
+    public List<Artifactory> listArtifacts(ArtifactRequest artifactRequest) {
         String listUrl = String.format("%s/artifactory/api/search/aql", host);
         HttpRequest httpRequest = HttpRequest.newBuilder()
                 .uri(URI.create(listUrl))
                 .timeout(Duration.ofSeconds(3))
                 .header(apiKey, apiToken)
-                .POST(HttpRequest.BodyPublishers.ofString(querystring)).build();
+                .POST(HttpRequest.BodyPublishers.ofString(artifactRequest.toString())).build();
         List<Artifactory> artifacts = new ArrayList<>();
         try {
             HttpResponse<String> response = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
@@ -123,6 +125,11 @@ public class JfrogArtifactoryClient implements ArtifactoryClient {
     @Bean
     private HttpClient httpClient(){
         return HttpClient.newHttpClient();
+    }
+
+    @Bean
+    private ExecutorService executorService() {
+        return Executors.newSingleThreadExecutor();
     }
 
 }

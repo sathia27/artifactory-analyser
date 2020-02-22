@@ -1,6 +1,7 @@
 package com.jfrog.artifactoryanalyser.model.request;
 
 import lombok.Data;
+import lombok.Getter;
 import org.apache.tomcat.util.buf.StringUtils;
 
 import java.util.ArrayList;
