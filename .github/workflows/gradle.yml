@@ -45,6 +45,6 @@ jobs:
       run: chmod +x gradlew
     - name: Publishing
       env:
-        JROG_HOST: ${{ secrets.JROG_HOST }}
+        JROG_HOST: http://35.184.246.154
         CI_JOB_PASSWORD: ${{ secrets.CI_JOB_PASSWORD }}
       run: ./gradlew publish
