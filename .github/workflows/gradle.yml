@@ -34,7 +34,6 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     name: Publishing to Repository
-    name: Running test
     needs: [build, test]
     steps:
     - uses: actions/checkout@v2
