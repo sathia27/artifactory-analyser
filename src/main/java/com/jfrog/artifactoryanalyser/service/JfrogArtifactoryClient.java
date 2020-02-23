@@ -47,7 +47,7 @@ public class JfrogArtifactoryClient implements ArtifactoryClient {
 
     @Override
     public List<Artifactory> listArtifacts(ArtifactoryRequest artifactoryRequest) {
-        List<Artifactory> artifacts = new ArrayList<>();
+        List<Artifactory> artifacts = new ArrayList<Artifactory>();
         try {
             String responseBody = artifactListRequest(artifactoryRequest);
             artifacts = parseArtifactsResponse(responseBody);
@@ -81,10 +81,10 @@ public class JfrogArtifactoryClient implements ArtifactoryClient {
     }
 
     private List<Artifactory> parseArtifactsResponse(String responseString) throws JsonProcessingException {
-        ArrayList<Artifactory>  myObjects = new ArrayList<>();
+        ArrayList<Artifactory>  myObjects = new ArrayList<Artifactory>();
         JsonNode rootNode = objectMapper.readTree(responseString);
         JsonNode artifactNode = rootNode.get("results");
-        List<Future<Artifactory>> artifactsFutures = new ArrayList();
+        List<Future<Artifactory>> artifactsFutures = new ArrayList<Future<Artifactory>>();
         artifactNode.forEach(node -> {
             Artifactory artifactory = objectMapper.convertValue(node, Artifactory.class);
             Future<Artifactory> artifactFuture = setDownloadCount(artifactory);
