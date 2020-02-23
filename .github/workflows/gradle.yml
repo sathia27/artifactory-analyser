@@ -5,12 +5,12 @@ on:
     branches:
       - master
 jobs:
-  env:
-    JROG_HOST: ${{ secrets.JROG_HOST }}
-    CI_JOB_PASSWORD: ${{ secrets.CI_JOB_PASSWORD }}
   test:
     runs-on: ubuntu-latest
     name: Running test
+    env:
+      JROG_HOST: ${{ secrets.JROG_HOST }}
+      CI_JOB_PASSWORD: ${{ secrets.CI_JOB_PASSWORD }}
     steps:
     - uses: actions/checkout@v2
     - name: Set up JDK 1.8
@@ -23,6 +23,10 @@ jobs:
       run: ./gradlew test
   build:
     runs-on: ubuntu-latest
+    name: Build
+    env:
+      JROG_HOST: ${{ secrets.JROG_HOST }}
+      CI_JOB_PASSWORD: ${{ secrets.CI_JOB_PASSWORD }}
     steps:
     - uses: actions/checkout@v2
     - name: Set up JDK 1.8
@@ -36,6 +40,9 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     name: Publishing to Repository
+    env:
+      JROG_HOST: ${{ secrets.JROG_HOST }}
+      CI_JOB_PASSWORD: ${{ secrets.CI_JOB_PASSWORD }}
     needs: build
     steps:
     - uses: actions/checkout@v2
