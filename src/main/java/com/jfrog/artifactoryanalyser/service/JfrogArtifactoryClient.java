@@ -130,7 +130,7 @@ public class JfrogArtifactoryClient implements ArtifactoryClient {
 
     @Bean
     private ExecutorService executorService() {
-        return Executors.newSingleThreadExecutor();
+        return Executors.newFixedThreadPool(5);
     }
 
 }

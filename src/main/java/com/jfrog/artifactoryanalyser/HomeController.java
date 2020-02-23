@@ -24,7 +24,6 @@ public class HomeController {
         List<Artifactory> artifacts  = artifactoryClient.listArtifacts(artifactoryRequest).stream()
                 .sorted(Comparator.comparing(Artifactory::getDownloadCount).reversed())
                 .limit(topn_results).collect(Collectors.toList());
-        System.out.println(artifacts);
         model.addAttribute("artifacts", artifacts);
         return "artifact-index";
     }
