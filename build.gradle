@@ -28,6 +28,7 @@ publishing {
     repositories {
         maven {
             url = String.format("%s/artifactory/artifact-analyser-test", System.getenv("JFROG_HOST"))
+            System.out.println(String.format("Publishing to %s", url))
             credentials {
                 username = "sathia"
                 password = System.getenv("CI_JOB_PASSWORD")
