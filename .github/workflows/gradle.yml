@@ -5,6 +5,9 @@ on:
     branches:
       - master
 jobs:
+  env:
+    JROG_HOST: ${{ secrets.JROG_HOST }}
+    CI_JOB_PASSWORD: ${{ secrets.CI_JOB_PASSWORD }}
   test:
     runs-on: ubuntu-latest
     name: Running test
