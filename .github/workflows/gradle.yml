@@ -44,7 +44,9 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
     - name: Publishing
+      run:
+        echo "testing" $JROG_HOST
+        ./gradlew publish
       env:
         JROG_HOST: http://35.184.246.154
         CI_JOB_PASSWORD: ${{ secrets.CI_JOB_PASSWORD }}
-      run: ./gradlew publish
