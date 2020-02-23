@@ -66,7 +66,7 @@ public class JfrogArtifactoryClientTest {
 
 
     @Test
-    public void fetchArtifactResponse(){
+    public void fetchArtifactResponseWhenArtifactResponseisOk(){
         ArtifactoryRequest artifactoryRequest = new ArtifactoryRequest();
         artifactoryRequest.setRepo("jcenter");
 

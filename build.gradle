@@ -27,10 +27,10 @@ publishing {
 
     repositories {
         maven {
-            url = "http://35.184.246.154/artifactory/artifact-analyser-test"
+            url = String.format("%s/artifactory/artifact-analyser-test", System.getenv("JFROG_HOST"))
             credentials {
                 username = "sathia"
-                password = "k36Qf1nVcr"
+                password = System.getenv("CI_JOB_PASSWORD")
             }
             authentication {                            // I was missing this authentication section and that's why read timeout
                 basic(BasicAuthentication)

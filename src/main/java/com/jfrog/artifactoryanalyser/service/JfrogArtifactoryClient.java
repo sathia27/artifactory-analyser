@@ -71,6 +71,7 @@ public class JfrogArtifactoryClient implements ArtifactoryClient {
 
     private String artifactListRequest(ArtifactoryRequest artifactoryRequest) throws IOException, InterruptedException {
         String listUrl = String.format("%s/artifactory/api/search/aql", host);
+        System.out.println(listUrl);
         HttpRequest httpRequest = HttpRequest.newBuilder()
                 .uri(URI.create(listUrl))
                 .timeout(Duration.ofSeconds(3))
