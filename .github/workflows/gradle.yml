@@ -44,10 +44,10 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
     - name: Publishing
-      run: |
+      run: ./gradlew publish
         echo "testing"
         echo $JFROG_HOST
         ./gradlew publish
       env:
-        JFROG_HOST: http://35.184.246.154
+        JFROG_HOST: ${{ secrets.JFROG_HOST }}
         CI_JOB_PASSWORD: ${{ secrets.CI_JOB_PASSWORD }}
