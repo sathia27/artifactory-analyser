@@ -46,9 +46,8 @@ jobs:
     - name: Publishing
       run: |
         echo "testing"
-        echo $JROG_HOST
-        export JROG_HOST=$JROG_HOST
+        echo $JFROG_HOST
         ./gradlew publish
       env:
-        JROG_HOST: http://35.184.246.154
+        JFROG_HOST: http://35.184.246.154
         CI_JOB_PASSWORD: ${{ secrets.CI_JOB_PASSWORD }}
