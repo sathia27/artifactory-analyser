@@ -8,9 +8,6 @@ jobs:
   test:
     runs-on: ubuntu-latest
     name: Running test
-    env:
-      JROG_HOST: ${{ secrets.JROG_HOST }}
-      CI_JOB_PASSWORD: ${{ secrets.CI_JOB_PASSWORD }}
     steps:
     - uses: actions/checkout@v2
     - name: Set up JDK 1.8
@@ -24,9 +21,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     name: Build
-    env:
-      JROG_HOST: ${{ secrets.JROG_HOST }}
-      CI_JOB_PASSWORD: ${{ secrets.CI_JOB_PASSWORD }}
     steps:
     - uses: actions/checkout@v2
     - name: Set up JDK 1.8
@@ -40,9 +34,6 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     name: Publishing to Repository
-    env:
-      JROG_HOST: ${{ secrets.JROG_HOST }}
-      CI_JOB_PASSWORD: ${{ secrets.CI_JOB_PASSWORD }}
     needs: build
     steps:
     - uses: actions/checkout@v2
@@ -53,4 +44,7 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
     - name: Publishing
+      env:
+        JROG_HOST: ${{ secrets.JROG_HOST }}
+        CI_JOB_PASSWORD: ${{ secrets.CI_JOB_PASSWORD }}
       run: ./gradlew publish
