@@ -5,7 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jfrog.artifactoryanalyser.model.Artifactory;
-import com.jfrog.artifactoryanalyser.model.request.ArtifactRequest;
+import com.jfrog.artifactoryanalyser.model.request.ArtifactoryRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -46,17 +46,11 @@ public class JfrogArtifactoryClient implements ArtifactoryClient {
     private ExecutorService executor;
 
     @Override
-    public List<Artifactory> listArtifacts(ArtifactRequest artifactRequest) {
-        String listUrl = String.format("%s/artifactory/api/search/aql", host);
-        HttpRequest httpRequest = HttpRequest.newBuilder()
-                .uri(URI.create(listUrl))
-                .timeout(Duration.ofSeconds(3))
-                .header(apiKey, apiToken)
-                .POST(HttpRequest.BodyPublishers.ofString(artifactRequest.toString())).build();
+    public List<Artifactory> listArtifacts(ArtifactoryRequest artifactoryRequest) {
         List<Artifactory> artifacts = new ArrayList<>();
         try {
-            HttpResponse<String> response = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
-            artifacts = parseArtifacts(response.body());
+            String responseBody = artifactListRequest(artifactoryRequest);
+            artifacts = parseArtifactsResponse(responseBody);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -67,32 +61,6 @@ public class JfrogArtifactoryClient implements ArtifactoryClient {
         return artifacts;
     }
 
-    private List<Artifactory> parseArtifacts(String responseString) {
-        ArrayList<Artifactory>  myObjects = new ArrayList<>();
-        try {
-            JsonNode rootNode = objectMapper.readTree(responseString);
-            JsonNode artifactNode = rootNode.get("results");
-            List<Future<Artifactory>> artifactsFutures = new ArrayList();
-            artifactNode.forEach(node -> {
-                Artifactory artifactory = objectMapper.convertValue(node, Artifactory.class);
-                Future<Artifactory> artifactFuture = setDownloadCount(artifactory);
-                artifactsFutures.add(artifactFuture);
-            });
-            artifactsFutures.forEach(artifactFuture -> {
-                try {
-                    myObjects.add(artifactFuture.get());
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                }
-            });
-        } catch (JsonProcessingException e){
-            e.printStackTrace();
-        }
-        return myObjects;
-    }
-
     private Future<Artifactory> setDownloadCount(Artifactory artifactory) {
         return executor.submit(() -> {
             Integer downloadCount = getDownloadCount(artifactory);
@@ -101,8 +69,41 @@ public class JfrogArtifactoryClient implements ArtifactoryClient {
         });
     }
 
+    private String artifactListRequest(ArtifactoryRequest artifactoryRequest) throws IOException, InterruptedException {
+        String listUrl = String.format("%s/artifactory/api/search/aql", host);
+        HttpRequest httpRequest = HttpRequest.newBuilder()
+                .uri(URI.create(listUrl))
+                .timeout(Duration.ofSeconds(3))
+                .header(apiKey, apiToken)
+                .POST(HttpRequest.BodyPublishers.ofString(artifactoryRequest.toString())).build();
+        HttpResponse<String> response = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+        return response.body();
+    }
+
+    private List<Artifactory> parseArtifactsResponse(String responseString) throws JsonProcessingException {
+        ArrayList<Artifactory>  myObjects = new ArrayList<>();
+        JsonNode rootNode = objectMapper.readTree(responseString);
+        JsonNode artifactNode = rootNode.get("results");
+        List<Future<Artifactory>> artifactsFutures = new ArrayList();
+        artifactNode.forEach(node -> {
+            Artifactory artifactory = objectMapper.convertValue(node, Artifactory.class);
+            Future<Artifactory> artifactFuture = setDownloadCount(artifactory);
+            artifactsFutures.add(artifactFuture);
+        });
+        artifactsFutures.forEach(artifactFuture -> {
+            try {
+                myObjects.add(artifactFuture.get());
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+        });
+        return myObjects;
+    }
+
     private Integer getDownloadCount(Artifactory artifactory) {
-        String urlBuilder = String.format("%s/artifactory/api/storage/jcenter-cache/%s/%s?stats", host, artifactory.getPath(), artifactory.getName());
+        String urlBuilder = String.format("%s/artifactory/api/storage/%s/%s/%s?stats", host, artifactory.getRepo(), artifactory.getPath(), artifactory.getName());
         HttpRequest httpRequest = HttpRequest.newBuilder()
                 .uri(URI.create(urlBuilder))
                 .timeout(Duration.ofSeconds(30))

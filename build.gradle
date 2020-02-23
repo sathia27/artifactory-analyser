@@ -41,9 +41,12 @@ publishing {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    testImplementation('org.springframework.boot:spring-boot-starter-test') {
-        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
-    }
+    testImplementation('org.springframework.boot:spring-boot-starter-test')
+    testImplementation('org.junit.jupiter:junit-jupiter-api:5.4.2')
+    testRuntime('org.junit.jupiter:junit-jupiter-engine:5.4.2')
+    testCompile group: 'org.mockito', name: 'mockito-core', version: '2.22.0'
+    implementation 'com.github.paweladamski:HttpClientMock:1.6.0'
+    testCompile "io.specto:hoverfly-java:0.12.2"
     compile('org.springframework.boot:spring-boot-starter-thymeleaf')
     compileOnly 'org.projectlombok:lombok:1.18.12'
     annotationProcessor 'org.projectlombok:lombok:1.18.12'

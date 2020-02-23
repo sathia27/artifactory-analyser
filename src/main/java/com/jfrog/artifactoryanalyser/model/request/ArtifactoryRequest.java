@@ -1,15 +1,13 @@
 package com.jfrog.artifactoryanalyser.model.request;
 
 import lombok.Data;
-import lombok.Getter;
 import org.apache.tomcat.util.buf.StringUtils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Data
-public class ArtifactRequest {
+public class ArtifactoryRequest {
     private String repo;
     private String path;
 
